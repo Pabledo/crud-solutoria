@@ -11,32 +11,32 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                            @if ($errors->any())
+                                @if ($errors->any())
                                 <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                                <strong>¡Revise los campos!</strong>                        
-                                    @foreach ($errors->all() as $error)                                    
-                                        <span class="badge badge-danger">{{ $error }}</span>
-                                    @endforeach                        
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                    <strong>¡Revise los campos!</strong>                        
+                                        @foreach ($errors->all() as $error)                                    
+                                            <span class="badge badge-danger">{{ $error }}</span>
+                                        @endforeach                        
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-                            @endif
+                                @endif
     
-                            <form action="{{ route('store') }}" method="POST">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                            <label for="value">Valor de UF el día de hoy</label>
-                                            <input type="number" name="value" id="value" class="form-control" step="0.01" onChange="format"  pattern="[0-9]+([\.][0-9]+)?" required/>
+                                <form id="create-form" data-action="{{ route('indicators.store') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label for="value">Valor de UF el día de hoy</label>
+                                                <input type="number" name="value" id="value" class="form-control" step="0.01" onChange="format"  pattern="[0-9]+([\.][0-9]+)?" required/>
+                                            </div>
+                                        </div>
+                                        <div class="pt-3 col-xs-12 col-sm-12 col-md-12">
+                                            <button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
-                                    <div class="pt-3 col-xs-12 col-sm-12 col-md-12">
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -47,9 +47,9 @@
 @endsection
 
 @section('scripts')
-<script>
-    function format(event) {
-        this.value = parseFloat(this.value).toFixed(2);
-    }
-</script>
+    <script>
+        function format(event) {
+            this.value = parseFloat(this.value).toFixed(2);
+        }
+    </script>
 @endsection

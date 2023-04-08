@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Indicator;
+use Illuminate\Support\Facades\Validator;
 
 class IndicatorController extends Controller
 {
@@ -14,9 +15,11 @@ class IndicatorController extends Controller
      */
     public function index()
     {
-        $ufs = Indicator::orderByDesc('date')->paginate(15);
+        $ufs = Indicator::orderByDesc('date')->paginate(10);
         $title = Indicator::first()->name;
-        return view('indicators.index', compact('ufs', 'title'));
+        $source = Indicator::first()->source;
+        $currency = Indicator::first()->currency;
+        return view('indicators.index', compact('ufs', 'title', 'source', 'currency'));
     }
 
     /**
@@ -26,7 +29,7 @@ class IndicatorController extends Controller
      */
     public function create()
     {
-        return view('indicators.create');
+        //
     }
 
     /**
@@ -37,7 +40,25 @@ class IndicatorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator =  Validator::make($request->all(), [
+            'value' => ['required', 'numeric'],
+            'date' => ['required', 'date', 'max:255', 'unique:indicators']
+        ],
+            $messages = [
+                'required' => 'El campo :attribute es obligatorio.',
+                'date' => 'el campo :attribute es inválido.',
+                'unique' => 'Ya hay un registro con esta fecha.'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'error'=> $validator->errors()], 400);
+        }
+
+        Indicator::create([
+            'value' => $request->value,
+            'date' => $request->date
+        ]);
+
+        return response()->json(['success'=>'UF registrada con éxito.']);
     }
 
     /**
@@ -71,7 +92,24 @@ class IndicatorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator =  Validator::make($request->all(), [
+            'value' => ['required', 'numeric'],
+            'date' => ['required', 'date', 'max:255', 'unique:indicators']
+        ],
+            $messages = [
+                'required' => 'El campo :attribute es obligatorio.',
+                'date' => 'el campo :attribute es inválido.',
+                'unique' => 'Ya hay un registro con esta fecha.'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'error'=> $validator->errors()], 400);
+        }
+        $uf = Indicator::find($request->idUf);
+        $uf->update([
+            'value' => $request->value,
+            'date' => $request->date
+        ]);
+        return response()->json(['success'=>'UF actualizada con éxito.']);
     }
 
     /**
@@ -82,6 +120,8 @@ class IndicatorController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $uf = Indicator::find($id);
+        $uf->delete();
+        return response()->json(['success'=>'UF eliminada con éxito.']);
     }
 }

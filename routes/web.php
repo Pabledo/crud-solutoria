@@ -15,12 +15,6 @@ use App\Http\Controllers\IndicatorController;
 
 Auth::routes();
 
-Route::post('/', function () {
-    return view('indicators');
- });
+Route::get('/', [IndicatorController::class, 'index'])->name('index');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::resource('/', IndicatorController::class);
-
-// Route::group(['middleware' => ['auth']], function(){
-// });
+Route::resource('indicators', IndicatorController::class);

@@ -17,4 +17,11 @@ class Indicator extends Model
         'time',
         'source',
     ];
+
+    protected $attributes = [
+        'name' => 'UNIDAD DE FOMENTO (UF)',
+        'symbol' => 'UF',
+        'currency' => 'Pesos',
+        'source' => 'mindicador.cl',
+    ];
 }
