@@ -32,7 +32,7 @@
                                             <td class="text-center">{{ date('d-m-Y', $newDate);}}</td>
                                             <td class="text-center">{{ $uf->value }}</td>
                                             <td class="text-center">
-                                                <button type="submit" class="btn btn-info updateUF" value="{{$uf->id}}"><i class="fa fa-pen"></i></button>
+                                                <button type="submit" class="btn btn-info" onclick="editUF({{$uf->id}})"><i class="fa fa-pen"></i></button>
                                                 <button type="submit" class="btn btn-danger deleteUF" value="{{$uf->id}}"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
@@ -43,6 +43,23 @@
                                     {!! $ufs->links() !!}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row py-5">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 my-auto">
+                                <div class="form-group pb-5">
+                                    <label for="date_range">Seleccione intervalo:</label>
+                                    <input type="text" name="dateRange" id="dateRange" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container mb-5">
+                            <div id="chart" class=" d-none w-100" style="height:400px;"></div>
                         </div>
                     </div>
                 </div>
@@ -59,7 +76,7 @@
             </div>
             <div class="modal-body">
                 <div class="pb-3" id="errors"></div>
-                <form id="create-form" data-action="{{ route('indicators.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="create-form">
                     @csrf
                     <input type="hidden" name="updateId" id="updateId">
                     <div class="row">
@@ -125,14 +142,145 @@
 @endsection
 
 @section('scripts')
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script>
         function format(event) {
             this.value = parseFloat(this.value).toFixed(2);
         }
-        function successInsert() {
-            $('#createModal').hide();
-            $('#confirmModal').modal({ backdrop: "static" });
-            $('#confirmModal').modal('show');
+
+
+
+        function getIndicators() {
+            let date = $('#dateRange').val();
+            let dateArr = date.split(' - ');
+            console.log(dateArr)
+            $.ajax({
+                url: '{{route('indicators.getResultsByRangeDate')}}',
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    start: dateArr[0],
+                    end: dateArr[1],
+                },
+                success: function(response) {
+                    console.log(response.results)
+                    $("#chart").removeClass('d-none');
+                    generateChart(response.results);
+                },
+                error: function(xhr, status, error) {
+                    console.log("error");
+                    console.log(xhr);
+                }
+            });
         }
+
+        function generateChart(results) {
+            Highcharts.setOptions({
+                lang: {
+                        loading: 'Cargando...',
+                        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                        weekdays: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                        shortMonths: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                        exportButtonTitle: "Exportar",
+                        printButtonTitle: "Importar",
+                        rangeSelectorFrom: "Desde",
+                        rangeSelectorTo: "Hasta",
+                        rangeSelectorZoom: "Período",
+                        downloadPNG: 'Descargar imagen PNG',
+                        downloadJPEG: 'Descargar imagen JPEG',
+                        downloadPDF: 'Descargar imagen PDF',
+                        downloadSVG: 'Descargar imagen SVG',
+                        printChart: 'Imprimir',
+                        resetZoom: 'Reiniciar zoom',
+                        resetZoomTitle: 'Reiniciar zoom',
+                        thousandsSep: ",",
+                        decimalPoint: '.'
+                    }        
+            });
+            
+            Highcharts.chart('chart', {
+                chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: 'VALOR HISTÓRICO'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Valores'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                xAxis: {
+                    title: {
+                        text: 'Fecha'
+                    },
+                    type: 'datetime',
+                    labels: { 
+                        format: '{value:%d/%m/%y}',
+                    }
+                },
+                tooltip:{
+                    xDateFormat: '%A, %d/%m/%y',
+				},
+                series: [{
+                    name: 'Valor',
+                    data: results
+                }]
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            $('#dateRange').daterangepicker({
+                autoUpdateInput: false,
+                "locale": {
+                    "format": "DD/MM/YYYY",
+                    "separator": " - ",
+                    "applyLabel": "Aplicar",
+                    "cancelLabel": "Cancelar",
+                    "fromLabel": "Desde",
+                    "toLabel": "Hasta",
+                    "customRangeLabel": "Personalizar",
+                    "daysOfWeek": [
+                        "Do",
+                        "Lu",
+                        "Ma",
+                        "Mi",
+                        "Ju",
+                        "Vi",
+                        "Sa"
+                    ],
+                    "monthNames": [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Septiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                    "firstDay": 1
+                },
+            }, function(start, end, label) {
+            });
+
+            $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                getIndicators();
+            });
+        });
     </script>
 @endsection

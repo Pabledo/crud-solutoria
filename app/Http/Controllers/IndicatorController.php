@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Indicator;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class IndicatorController extends Controller
 {
@@ -69,7 +70,8 @@ class IndicatorController extends Controller
      */
     public function show($id)
     {
-        //
+        $uf = Indicator::find($id);
+        return response()->json(['uf' => $uf]);
     }
 
     /**
@@ -94,7 +96,7 @@ class IndicatorController extends Controller
     {
         $validator =  Validator::make($request->all(), [
             'value' => ['required', 'numeric'],
-            'date' => ['required', 'date', 'max:255', 'unique:indicators']
+            'date' => ['required', 'date', 'max:255', \Illuminate\Validation\Rule::unique('indicators')->ignore($request->id)]
         ],
             $messages = [
                 'required' => 'El campo :attribute es obligatorio.',
@@ -104,7 +106,7 @@ class IndicatorController extends Controller
         if ($validator->fails()) {
             return response()->json(['success' => false, 'error'=> $validator->errors()], 400);
         }
-        $uf = Indicator::find($request->idUf);
+        $uf = Indicator::find($request->id);
         $uf->update([
             'value' => $request->value,
             'date' => $request->date
@@ -123,5 +125,21 @@ class IndicatorController extends Controller
         $uf = Indicator::find($id);
         $uf->delete();
         return response()->json(['success'=>'UF eliminada con éxito.']);
+    }
+
+    public static function getResultsByRangeDate(Request $request){
+        $start = Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d');
+        $end = Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d');
+
+        $results = Indicator::select('date', 'value')->whereBetween('date', [$start, $end])->orderBy('indicators.date','asc')->get();
+        
+        $arr = [];
+        foreach ($results as $res) {
+            $date = Carbon::createFromFormat('Y-m-d', $res->date)->format('d-m-Y');
+            array_push($arr, [strtotime($date)*1000, $res->value]);
+        }
+
+        
+        return response()->json(['results'=> $arr]);
     }
 }

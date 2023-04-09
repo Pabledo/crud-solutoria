@@ -1,23 +1,30 @@
-//      GUARDAR REGISTRO
+/* 
+    Abrir modal para crear un nuevo registro 
+*/
 function createUF(){
+    $("#value").val("");
+    $("#date").val("");
     $('#modalTitle2').text('NUEVO REGISTRO');
-    $("#form-modal").modal('show'); 
+    $("#updateId").val("");
+    $("#createModal").modal('show'); 
 }
-
+/* 
+    Guarda o Actualiza dependiendo del valor del submit 
+*/
 $("#btnSave").on('click', function(e){
     e.preventDefault();
     if($("#updateId").val() == null || $("#updateId").val() == ""){
-        createUF();
+        StoreUF();
     } else {
         updateUF();
     }
 })
-
-$('#create-form').on('submit', function(event){
-    event.preventDefault();
+/* 
+    Inserta registro en la BD 
+*/
+function StoreUF(){
     $("#btnSave").prop('disabled', true);
-    var url = $(this).attr('data-action');
-    console.log(url)
+    var url = 'indicators'
     $.ajax({
         url: url,
         method: 'POST',
@@ -30,45 +37,74 @@ $('#create-form').on('submit', function(event){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-            successInsert();
+            $("#btnSave").prop('disabled', false);
+            $('#createModal').hide();
+            $('#confirmModal').modal({ backdrop: "static" });
+            $('#confirmModal').modal('show');
         },
         error: function(xhr, status, error) {
-            console.log('en error')
-            console.log(xhr)
+            $("#btnSave").prop('disabled', false);
           $.each(xhr.responseJSON.error, function (key, item) {
             $("#errors").append("<li class='alert alert-danger'>"+item+"</li>")
           });
         }
     });
-});
+}
 
-//      MODIFICAR REGISTRO
-
-$('body').on('click', '.updateUF', function () {
-    $('#modalTitle2').text('ACTUALIZAR REGISTRO');
-    $('#createModal').modal("show");
-    var idUf = $(this).val();
-});
-
-function updateUF(){
-    
-    var url = 'indicators/'
+/* 
+    Obtiene los registros para insertarlos en el Form 
+*/
+function editUF(id){
+    let url = "indicators/" + id ;
     $.ajax({
-        url: url+idUf,
-        method: 'PUT',
-        data: {
-            id: idUf,
-            value: $('#value').val(),
-            date: $('#date').val(),
-        },
-        dataType: 'json',
+        url: url,
+        type: "GET",
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-            successInsert();
+            console.log('Success en edit')
+            let uf = response.uf;
+            $("#errors").html("");
+            $("#updateId").val(uf.id);
+            $("#value").val(uf.value);
+            $("#date").val(uf.date);
+            $("#createModal").modal('show'); 
+        },
+        error: function(response) {
+            console.log('Error en edit:'+response.responseJSON)
+        }
+    });
+}
+
+/* 
+    Actualiza un registro en la BD 
+*/
+
+function updateUF(){
+    $("#btnSave").prop('disabled', true);
+    var url = 'indicators/' + $("#updateId").val();
+    $.ajax({
+        url: url,
+        method: 'PUT',
+        data: {
+            id: $("#updateId").val(),
+            value: $('#value').val(),
+            date: $('#date').val(),
+        },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            $("#btnSave").prop('disabled', false);
+            $('#modalTitle').text('¡Registro Actualizado!');
+            $('#modalInfo').text('El registro se ha actualizado exitosamente en la base de datos.');
+            $('#confirmModal').modal("show");;
+            $("#value").val("");
+            $("#date").val("");
         },
         error: function(xhr, status, error) {
+            $("#btnSave").prop('disabled', false);
             console.log('en error')
             console.log(xhr)
           $.each(xhr.responseJSON.error, function (key, item) {
@@ -78,7 +114,9 @@ function updateUF(){
     });
 }
 
-//      ELIMINAR REGISTRO
+/* 
+    Elimina un registro de la BD 
+*/
 $('body').on('click', '.deleteUF', function () {
     var id = $(this).val();
     $('#idToDelete').val(id);
@@ -104,3 +142,9 @@ function deleteUF(){
         }
     });
 }
+
+/* 
+        SELECTOR DE FECHAS GRÁFICO 
+*/
+
+

@@ -18,3 +18,4 @@ Auth::routes();
 Route::get('/', [IndicatorController::class, 'index'])->name('index');
 
 Route::resource('indicators', IndicatorController::class);
+Route::post('indicators/getResultsByRangeDate', 'App\Http\Controllers\IndicatorController@getResultsByRangeDate')->name('indicators.getResultsByRangeDate');
