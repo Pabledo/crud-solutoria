@@ -1,7 +1,7 @@
 
-## CRUD Solutoria
+# CRUD Solutoria
 
-# Proceso de instalación
+## Proceso de instalación
 
 ...
 npm install
