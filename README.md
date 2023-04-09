@@ -1,13 +1,15 @@
 
-## CRUD Solutoria
+# CRUD Solutoria
 
-# Proceso de instalación
+## Proceso de instalación
 
-...
+Navegar al directorio del proyecto y ejecutar los siguientes comandos en la terminal
+```
 npm install
 composer install
+// Copiar el archivo .env.example y renombrarlo como .env; En la propiedad DB_DATABASE, asignar el valor de crud-solutoria; Cambiar DB_USERNAME y DB_PASSWORD de ser necesario.
+php artisan key:generate
 npm run dev
 php artisan migrate:fresh --seed
-// El archivo .env.example se debe de realizar una copiar y renombrarlo como .env
-php artisan key:generate
-...
+php artisan serve
+```
