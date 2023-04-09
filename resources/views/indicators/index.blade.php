@@ -3,7 +3,7 @@
 @section('content')
 <section class="section">
     <h1 class="title text-center pt-5 px-2">{{ $title }}</h1>
-    <h3 class="fw-bold text-center px-2">Mantenedor de datos históricos</h3>
+    <h3 class="fw-bold text-center px-2 pb-3">Mantenedor de datos históricos</h3>
     <div class="section-body">
         <div class="container">
             <div class="row">
@@ -11,7 +11,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="pb-2 d-flex">
-                                <p class="me-auto my-auto">Datos obtenidos de: {{$source}}</p>
+                                <p class="me-auto my-auto">Datos obtenidos de: <a href="https://{{$source}}" target="_newblank">{{$source}}</a></p>
                                 <button class="btn btn-warning" onclick="createUF()"><i class="fas fa-plus"></i> Nuevo</button>
                             </div>
                             <div class="table-responsive mt-2">
@@ -48,6 +48,7 @@
                 </div>
             </div>
             <div class="row py-5">
+                <h2 class="fw-bold text-center px-2 pb-3">Gráfica en el tiempo</h2>
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -108,7 +109,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <br><br>
-                    <h1 id="modalTitle" class="text-center m-auto" style="color: #00ADCB;">¡Registro completado!</h1>
+                    <h1 id="modalTitle" class="text-center m-auto" style="color: #00ADCB;">¡REGISTRO CREADO!</h1>
                     <br><br>
                     <div class="container px-3">
                         <p id="modalInfo" class="text-center" style="font-size: 16px;">El registro se ha ingresado exitosamente en la base de datos.</p>

@@ -97,13 +97,13 @@ function updateUF(){
         },
         success: function(response) {
             $("#btnSave").prop('disabled', false);
-            $('#modalTitle').text('¡Registro Actualizado!');
+            $('#modalTitle').text('¡REGISTRO ACTUALIZADO!');
             $('#modalInfo').text('El registro se ha actualizado exitosamente en la base de datos.');
-            $('#confirmModal').modal("show");;
-            $("#value").val("");
-            $("#date").val("");
+            $('#confirmModal').modal({ backdrop: "static" });
+            $('#confirmModal').modal("show");
         },
         error: function(xhr, status, error) {
+            $("#errors").html("");
             $("#btnSave").prop('disabled', false);
             console.log('en error')
             console.log(xhr)
@@ -133,8 +133,9 @@ function deleteUF(){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (data) {
-            $('#modalTitle').text('¡Registro eliminado!');
+            $('#modalTitle').text('¡REGISTRO ELIMINADO!');
             $('#modalInfo').text('El registro se ha eliminado exitosamente de la base de datos.');
+            $('#confirmModal').modal({ backdrop: "static" });
             $('#confirmModal').modal("show");
         },
         error: function (data) {
