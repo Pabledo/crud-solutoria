@@ -29,6 +29,9 @@
         @yield('content')
     </div>
 </body>
+<footer class="pb-2">
+  <p class="text-white px-5 pt-2 mb-0">Desarrollado por: Pablo Muñiz Campos</p>
+</footer>
 @yield('scripts')
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"></script>
 </html>

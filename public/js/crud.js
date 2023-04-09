@@ -52,7 +52,7 @@ function StoreUF(){
 }
 
 /* 
-    Obtiene los registros para insertarlos en el Form 
+    Obtiene los registros para insertarlos en el Form de edición
 */
 function editUF(id){
     let url = "indicators/" + id ;
@@ -63,7 +63,6 @@ function editUF(id){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-            console.log('Success en edit')
             let uf = response.uf;
             $("#errors").html("");
             $("#updateId").val(uf.id);
@@ -105,8 +104,6 @@ function updateUF(){
         error: function(xhr, status, error) {
             $("#errors").html("");
             $("#btnSave").prop('disabled', false);
-            console.log('en error')
-            console.log(xhr)
           $.each(xhr.responseJSON.error, function (key, item) {
             $("#errors").append("<li class='alert alert-danger'>"+item+"</li>")
           });
@@ -145,7 +142,31 @@ function deleteUF(){
 }
 
 /* 
-        SELECTOR DE FECHAS GRÁFICO 
+        Rellena el Form de Mostrar 
 */
 
-
+function showUF(id) {
+    let url = "indicators/" + id ;
+    $.ajax({
+        url: url,
+        type: "GET",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            let uf = response.uf;
+            $("#nameUf").text(uf.name);
+            $("#symbolUf").text(uf.symbol);
+            $("#currencyUf").text(uf.currency);
+            $("#valueUf").text(uf.value);
+            let date = uf.date;
+            const arr = date.split("-");
+            $("#dateUf").text(arr[2]+"/"+arr[1]+"/"+arr[0]);
+            $("#sourceUf").text(uf.source);
+            $('#infoModal').modal("show"); 
+        },
+        error: function(response) {
+            console.log('Error:'+response.responseJSON)
+        }
+    });
+}

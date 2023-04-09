@@ -32,6 +32,7 @@
                                             <td class="text-center">{{ date('d-m-Y', $newDate);}}</td>
                                             <td class="text-center">{{ $uf->value }}</td>
                                             <td class="text-center">
+                                                <button type="submit" class="btn btn-warning" onclick="showUF({{$uf->id}})"><i class="fa fa-eye"></i></button>
                                                 <button type="submit" class="btn btn-info" onclick="editUF({{$uf->id}})"><i class="fa fa-pen"></i></button>
                                                 <button type="submit" class="btn btn-danger deleteUF" value="{{$uf->id}}"><i class="fa fa-trash"></i></button>
                                             </td>
@@ -68,7 +69,7 @@
         </div>
     </div>
 </section>
-<!-- MODAL DE FORM -->
+<!-- MODAL DE FORM DE CREACIÓN Y EDICIÓN -->
 <div class="modal fade" id="createModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -102,7 +103,7 @@
         </div>
     </div>
 </div>
-<!-- MODAL DE CONFIRMACIÓN -->
+<!-- MODAL DE MENSAJE DE CONFIRMACIÓN -->
 <div class="modal fade" id="confirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-dialog">
@@ -122,7 +123,7 @@
         </div>
     </div>
 </div>
-<!-- MODAL DE CONFIRMACIÓN ELIMINACIÓN-->
+<!-- MODAL DE CONFIRMACIÓN DE ELIMINACIÓN-->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -136,6 +137,49 @@
             <div class="modal-footer d-flex justify-content-center">
                 <button type="button" class="btn btn-outline-primary" data-mdb-dismiss="modal">No</button>
                 <button id="idToDelete" onclick="deleteUF();" type="button" class="btn btn-primary" data-mdb-dismiss="modal">Sí</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODAL DE INFORMACIÓN -->
+<div class="modal fade" id="infoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 id="modalTitle2" class="text-center text-white m-auto fw-bold">MÁS INFORMACIÓN</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row px-5 pt-2">
+                        <div class="form-group">
+                            <label for="nameUf"><b>Nombre</b></label>
+                            <p id="nameUf"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="symbolUf"><b>Código</b></label>
+                            <p id="symbolUf"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="currencyUf"><b>Unidad de medida</b></label>
+                            <p id="currencyUf"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="valueUf"><b>Valor</b></label>
+                            <p id="valueUf"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="dateUf"><b>Fecha</b></label>
+                            <p id="dateUf"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="sourceUf"><b>Fuente</b></label>
+                            <p id="sourceUf"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer mb-3">
+                <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -156,7 +200,6 @@
         function getIndicators() {
             let date = $('#dateRange').val();
             let dateArr = date.split(' - ');
-            console.log(dateArr)
             $.ajax({
                 url: '{{route('indicators.getResultsByRangeDate')}}',
                 type: 'POST',
@@ -169,7 +212,6 @@
                     end: dateArr[1],
                 },
                 success: function(response) {
-                    console.log(response.results)
                     $("#chart").removeClass('d-none');
                     generateChart(response.results);
                 },

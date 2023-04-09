@@ -14,3 +14,8 @@ li.alert.alert-danger {
 th.fw-bold{
     font-size: large;
 }
+
+footer{
+    background-color: #212529;
+    font-style: italic;
+}
