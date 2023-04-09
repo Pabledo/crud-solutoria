@@ -7,7 +7,7 @@ Navegar al directorio del proyecto y ejecutar los siguientes comandos en la term
 ```
 npm install
 composer install
-// Copiar el archivo .env.example y renombrarlo como .env; En la propiedad DB_DATABASE, asignar el valor de crud-solutoria
+// Copiar el archivo .env.example y renombrarlo como .env; En la propiedad DB_DATABASE, asignar el valor de crud-solutoria; Cambiar DB_USERNAME y DB_PASSWORD de ser necesario.
 php artisan key:generate
 npm run dev
 php artisan migrate:fresh --seed
